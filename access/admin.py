@@ -1,5 +1,5 @@
-# from django.contrib import admin
-# from .models import Profile, Company
+from django.contrib import admin
+from .models import Profile
 # from unfold.admin import ModelAdmin, StackedInline
 # from django.contrib.auth.models import User, Group
 # from django.contrib.sites.models import Site
@@ -28,88 +28,17 @@
 #     )
 # admin.site.register(Company, CompanyAdmin)
 
-# class ProfileAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'cpf', 'user__username', 'first_name', 'last_name', 'user__email', 'situation')
-#     search_fields = ('id', 'cpf', 'user__username', 'user__email')
-#     raw_id_fields = ('user',)
-#     # import_form_class = ImportForm
-#     # export_form_class = ExportForm
-# admin.site.register(Profile, ProfileAdmin)
-
-# class CustomUserAdmin(UserAdmin):
-#     list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser',)
-#     # Exibe os campos na primeira tela (formulário de criação)
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_staff', 'is_superuser',),
-#         }),
-#     )
-
-#     # Exibe os campos na tela de edição de usuário
-#     fieldsets = (
-#         (None, {'fields': ('username', 'password')}),
-#         ('Informações Pessoais', {'fields': ('first_name', 'last_name', 'email')}),
-#         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-#         ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
-#     )
-
-# # Remove a versão padrão e registra a personalizada
-# admin.site.unregister(User)
-# admin.site.register(User, CustomUserAdmin)
-
-# from django.contrib import admin
-# from django.contrib.admin import AdminSite
-# from .forms import CustomLoginForm
-# from .models import CustomUser
-
-# class CustomAdminSite(AdminSite):
-#     login_form = CustomLoginForm  # Altera o formulário de login para o personalizado
-
-# admin_site = CustomAdminSite(name='custom_admin')
-
-# # Registre seu modelo CustomUser
-# admin_site.register(CustomUser)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cpf', 'user__username', 'first_name', 'last_name', 'user__email', 'situation')
+    search_fields = ('id', 'cpf', 'user__username', 'user__email')
+    raw_id_fields = ('user',)
+    # import_form_class = ImportForm
+    # export_form_class = ExportForm
+admin.site.register(Profile, ProfileAdmin)
 
 
 
-# from django.contrib import admin
-# from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-# from .models import CustomUser
-# from django.contrib.auth import views as auth_views
-# from .forms import CustomAuthenticationForm
 
-# class CustomUserAdmin(BaseUserAdmin):
-#     # Especifica quais campos serão exibidos na lista de usuários
-#     list_display = ('email', 'username', 'is_active', 'is_staff', 'is_superuser', 'is_email_verified', 'is_primary_email',)
-    
-#     # Define quais campos serão editáveis na página de detalhes do usuário
-#     fieldsets = (
-#         (None, {'fields': ('username', 'email', 'password', 'is_email_verified', 'is_primary_email')}),
-#         ('Informações pessoais', {'fields': ('first_name', 'last_name',)}),
-#         ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-#         ('Datas', {'fields': ('last_login',)}),
-#     )
-#     readonly_fields = ('is_email_verified', 'is_primary_email')
-#     # Especifica quais campos podem ser editados na página de criação/edição
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('username', 'email', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser', 'is_email_verified', 'is_primary_email')}
-#         ),
-#     )
-
-#     # Define o campo que será usado para o login
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['username']  # ou outros campos que você deseja que sejam obrigatórios
-
-# # Registre o modelo e o admin personalizado
-# admin.site.register(CustomUser, CustomUserAdmin)
-
-# class CustomAdminSite(admin.AdminSite):
-#     login_form = CustomAuthenticationForm
-
-# admin_site = CustomAdminSite(name='custom_admin')
 
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -149,7 +78,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('username', 'email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')}),
         (_('Permissions'), {'fields': ('groups',)}),
-        (_('Important dates'), {'fields': ('last_login',)}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined',)}),
     )
     add_fieldsets = (
         (None, {
@@ -185,6 +114,15 @@ class UserAdmin(BaseUserAdmin):
             return self.add_view(request, form_url='', extra_context={'title': _('Add %s') % self.model._meta.verbose_name})
 
         return super().response_add(request, obj, post_url_continue)
+    
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        # Atualizar os campos do Profile
+        profile, created = Profile.objects.get_or_create(user=obj)
+        profile.first_name = form.cleaned_data.get('first_name')
+        profile.last_name = form.cleaned_data.get('last_name')
+        profile.save()
 
 # Re-registra o modelo User com o UserAdmin customizado
 admin.site.unregister(User)
