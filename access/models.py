@@ -11,7 +11,13 @@ class Company(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     razao_social = models.CharField(max_length=50, null=False, blank=False)
-    cnpj = models.CharField(max_length=50, null=True, blank=True)
+    cnpj = models.CharField(
+        max_length=14,
+        validators=[RegexValidator(regex='^\d{14}$', message='O CNPJ deve ter 14 dígitos')],
+        unique=True,
+        null=False, 
+        blank=False  
+    )
     is_active = models.BooleanField(default=True)
     # user_supervised = models.ManyToManyField(User)
     # user_master = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
@@ -25,14 +31,18 @@ class Company(models.Model):
     #     choices=COMPANYSTATUS_CHOICES,
     #     default='ativo'
     # )
-    cep = models.CharField(max_length=10, default='')  # Formato: 00000-000
+    cep = models.CharField(max_length=10, default='', blank=True, null=True)  # Formato: 00000-000
     address_type = models.CharField(
         max_length=15,
+        blank=True,
+        null=True,
         choices=[('residential', 'Residencial'), ('commercial', 'Comercial')],
-        default='residential'
+        default='commercial'
     )
     st_type = models.CharField(
         max_length=20,
+        blank=True,
+        null=True,
         choices=[('av', 'Avenida'), ('st', 'Rua'), ('pl', 'Praca'), ('other', 'Outros')],
         default='st'
     )
@@ -71,6 +81,8 @@ class Company(models.Model):
         ('TO', 'Tocantins'),
     ]
     uf = models.CharField(max_length=2, choices=UF_CHOICES, blank=True, null=True)
+    date_register = models.DateTimeField(default=timezone.now)
+    date_last_update = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -119,6 +131,8 @@ class Profile(models.Model):
         help_text='Indica que este usuário tem as permissões para consumir dados do BI sem atribuí-las explicitamente.'    
     )
     info = models.TextField(null=True, blank=True)
+    date_register = models.DateTimeField(default=timezone.now)
+    date_situation = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return str(self.user)
