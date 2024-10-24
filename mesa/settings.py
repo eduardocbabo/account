@@ -33,12 +33,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
+    'unfold.contrib.import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'import_export',
     # 'django.contrib.sites',
     'access',
     'allauth',
@@ -154,3 +158,111 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_HOST_USER = "contato@tegge.com.br"
 # EMAIL_HOST_PASSWORD = "lwpb jalz baim spmz"
 # DEFAULT_FROM_EMAIL = "contato@tegge.com.br"
+
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
+
+UNFOLD = {
+    "SITE_TITLE": "Sistema de crédito Tegge-BRB",
+    "SITE_HEADER": "Mesa Tegge-BRB",
+    "SITE_URL": "/",
+    # "SITE_ICON": {
+    #     "light": lambda request: static("images/icons/icon-light.svg"),  # light mode
+    #     "dark": lambda request: static("images/icons/icon-dark.svg"),  # dark mode
+    # },  
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/svg+xml",
+            "href": lambda request: static("images/icons/favicon.svg"),
+        },
+    ],
+    "COLORS": {
+        "font": {
+            "subtle-light": "107 114 128",
+            "subtle-dark": "156 163 175",
+            "default-light": "75 85 99",
+            "default-dark": "209 213 219",
+            "important-light": "17 24 39",
+            "important-dark": "243 244 246",
+        },
+        'primary': {
+        '50': '#eff9ff',
+        '100': '#daf0ff',
+        '200': '#bee6ff',
+        '300': '#91d8ff',
+        '400': '#5ec0fc',
+        '500': '#38a2f9',
+        '600': '#2285ee',
+        '700': '#1969d1',
+        '800': '#1c59b1',
+        '900': '#1c4c8c',
+        '950': '#163055',
+        },
+    },
+    "LOGIN": {
+        "image": lambda request: static("images/backgrounds/login-bg.png"),
+    },
+    "SIDEBAR": {
+        "show_search": False,  # Search in applications and models names
+        "show_all_applications": True,  # Dropdown with all applications and models
+        "navigation": [
+            {
+                "title": _("Admin"),
+                "separator": False,  # Top border
+                "collapsible": False,  # Collapsible group of links
+                "items": [
+                    {
+                        "title": _("Company"),
+                        "icon": "corporate_fare",  # Supported icon set: https://fonts.google.com/icons
+                        "link": reverse_lazy("admin:access_company_changelist"),
+                        # "badge": "sample_app.badge_callback",
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": _("Profile"),
+                        "icon": "person_add",  # Supported icon set: https://fonts.google.com/icons
+                        "link": reverse_lazy("admin:access_profile_changelist"),
+                        # "badge": "sample_app.badge_callback",
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": _("User"),
+                        "icon": "person",  # Supported icon set: https://fonts.google.com/icons
+                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        # "badge": "sample_app.badge_callback",
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": _("Group"),
+                        "icon": "group",  # Supported icon set: https://fonts.google.com/icons
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                        # "badge": "sample_app.badge_callback",
+                        "permission": lambda request: request.user.is_staff,
+                    },
+                    # {
+                    #     "title": _("Users"),
+                    #     "icon": "people",
+                    #     "link": reverse_lazy("admin:users_user_changelist"),
+                    # },
+                ],
+            },
+            {
+                "title": _("Operação"),
+                "separator": False,  # Top border
+                "collapsible": False,  # Collapsible group of links
+                "items": [
+                    {
+                        "title": _("Configurações"),
+                        "icon": "settings",
+                        "link": reverse_lazy("admin:index"),
+                        "permission": lambda request: request.user.is_authenticated,
+                    },
+                ],
+            },
+        ],
+    },
+}

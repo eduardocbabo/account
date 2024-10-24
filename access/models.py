@@ -119,7 +119,7 @@ class Profile(models.Model):
     ]
     situation = models.CharField(max_length=30, choices=SITUATION_CHOICES, null=True, blank=True, default='andamento')
     # supervised_by = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    # company = models.OneToOneField(Company, on_delete=models.CASCADE, null=True, blank=True) # Empresa do usuário
+    company = models.OneToOneField(Company, on_delete=models.CASCADE, related_name='profile', null=True, blank=True) # Empresa do usuário
     api = models.BooleanField(
         default=False,
         #verbose_name='Liberar API',
