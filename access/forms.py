@@ -37,3 +37,11 @@
 #         if user.check_password(password):
 #             return user
 #         return None
+
+from django import forms
+
+class EmailForm(forms.Form):
+    to = forms.EmailField(label='Destinatário')
+    subject = forms.CharField(max_length=255, label='Assunto')
+    body = forms.CharField(widget=forms.Textarea, label='Corpo')
+    attachment = forms.FileField(required=False, label='Anexo')

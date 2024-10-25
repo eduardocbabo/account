@@ -162,11 +162,11 @@ class UserAdmin(ModelAdmin, BaseUserAdmin, ImportExportModelAdmin):
             )
         return "Usuário ainda não foi salvo."
     
-    password_reset_link.short_description = "Reset de Senha"
+    password_reset_link.short_description = "Senha"
 
     list_display = (
         'username', 'email', 'first_name', 'last_name', 
-        'is_active', 'is_staff', 'is_superuser', 'password_reset_link'
+        'is_active', 'is_staff', 'is_superuser', 'password_reset_link', 'email_button',
     )
     search_fields = ('username', 'email', 'first_name', 'last_name')
     ordering = ('username',)
@@ -183,6 +183,22 @@ class UserAdmin(ModelAdmin, BaseUserAdmin, ImportExportModelAdmin):
             return  # Impede o salvamento
 
         super().save_model(request, obj, form, change)
+
+    def email_button(self, obj):
+        if obj.pk:
+            url = reverse('admin_send_email', args=[obj.pk])
+            print(f"URL do botão de e-mail: {url}")  # Debug para ver a URL gerada
+            return format_html(
+        '<div style="padding: 0; margin: 0; background: none; border: none;">'
+            '<a href="{}" style="background-color: #2285ee; color: white; padding: 8px 16px; '
+            'text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; '
+            'cursor: pointer;">'
+            'Enviar</a>'
+            '</div>',
+        url
+    )
+
+    email_button.short_description = 'Email'    
 
 # Re-registrar o UserAdmin customizado
 admin.site.unregister(User)
