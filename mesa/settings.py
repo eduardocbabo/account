@@ -243,6 +243,12 @@ UNFOLD = {
                         # "badge": "sample_app.badge_callback",
                         "permission": lambda request: request.user.is_staff,
                     },
+                    {
+                        "title": _("Emails"),
+                        "icon": "mail",
+                        "link": reverse_lazy("admin:account_emailaddress_changelist"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },
                     # {
                     #     "title": _("Users"),
                     #     "icon": "people",
