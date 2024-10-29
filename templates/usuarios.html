@@ -11,6 +11,51 @@
             padding: 20px;
         }
 
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4A90E2;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .actions input, .actions select, .actions button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        .actions input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .actions select {
+            max-width: 180px;
+        }
+
+        .btn {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            background-color: #357ABD;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -36,11 +81,12 @@
         a {
             display: inline-block;
             margin-top: 10px;
-            padding: 8px 15px;
+            padding: 10px 15px;
             background-color: #4A90E2;
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            text-align: center;
         }
 
         a:hover {
@@ -49,7 +95,33 @@
     </style>
 </head>
 <body>
+
     <h1>Lista de Usuários</h1>
+
+    <div class="actions">
+        <button class="btn">
+            <i data-lucide="plus"></i> Add User
+        </button>
+
+        <input type="text" placeholder="Search for name, email, phone number..." />
+
+        <select>
+            <option value="">Filter Status</option>
+            <option value="Verified">Verified</option>
+            <option value="Waiting">Waiting</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Hidden">Hidden</option>
+        </select>
+
+        <button class="btn">
+            <i data-lucide="download"></i> Import
+        </button>
+
+        <!-- <button class="btn">
+            <i data-lucide="sliders-horizontal"></i>
+        </button> -->
+    </div>
+
     <table>
         <thead>
             <tr>
@@ -76,5 +148,6 @@
     </table>
 
     <a href="/">Voltar para Home</a>
+
 </body>
 </html>
