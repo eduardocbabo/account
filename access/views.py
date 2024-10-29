@@ -67,7 +67,14 @@ def send_email_view(request, user_id):
 
     return render(request, 'admin/send_email.html', {'form': form, 'user': user})
 
+from django.shortcuts import render
 
+def base(request):
+    return render(request, 'base.html')
+
+def lista_usuarios(request):
+    usuarios = User.objects.all()  # Consulta todos os usuários
+    return render(request, 'usuarios.html', {'usuarios': usuarios})
 
 # def send_email_view(request):
 #     if request.method == 'POST':

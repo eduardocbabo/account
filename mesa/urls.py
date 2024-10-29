@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from access.views import base, lista_usuarios
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', base, name='base'),
+    # path ('',include('home.urls')),
     # path('admin/auth/', include('access.urls')),
     path('access/', include('access.urls')),
+    path('usuarios/', lista_usuarios, name='lista_usuarios'),
     
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
