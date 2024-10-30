@@ -92,6 +92,38 @@
         a:hover {
             background-color: #357ABD;
         }
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+        .modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    max-width: 500px;
+}
+
+        .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+        .close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+}
     </style>
 </head>
 <body>
@@ -102,7 +134,25 @@
         <button class="btn">
             <i data-lucide="plus"></i> Add User
         </button>
-
+        <div id="userModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Adicionar Usuário</h2>
+                <form id="userForm" method="POST" action="{% url 'criar_usuario' %}">
+                    {% csrf_token %}
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required><br><br>
+        
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required><br><br>
+        
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br><br>
+        
+                    <button type="submit" class="btn">Salvar</button>
+                </form>
+            </div>
+        </div>
         <input type="text" placeholder="Search for name, email, phone number..." />
 
         <select>
@@ -116,10 +166,6 @@
         <button class="btn">
             <i data-lucide="download"></i> Import
         </button>
-
-        <!-- <button class="btn">
-            <i data-lucide="sliders-horizontal"></i>
-        </button> -->
     </div>
 
     <table>
@@ -146,8 +192,110 @@
             {% endfor %}
         </tbody>
     </table>
+    <br>
+    <br>
+    <h1>Lista de Perfis</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Profile</th>
+                <th>CPF</th>
+                <th>Email</th>
+                <th>Dt Nascimento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profile in profiles %}
+            <tr>
+                <td>{{ profile.id }}</td>
+                <td>{{ profile.first_name }}</td>
+                <td>{{ profile.cpf}}</td>
+                <td>{{ profile.email }}</td>
+                <td>{{ profile.birthday }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum usuário encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>,
+
+
+<br>
+<br>
+<h1>Lista Combinada de Usuários e Perfis</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email do Usuário</th>
+            <th>CPF</th>
+            <th>Email do Perfil</th>
+            <th>Data de Nascimento</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+            {% with profile=usuario.profile %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ profile.cpf }}</td>
+                <td>{{ profile.email }}</td>
+                <td>{{ profile.birthday }}</td>
+            </tr>
+            {% endwith %}
+        {% empty %}
+        <tr>
+            <td colspan="6">Nenhum usuário ou perfil encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
     <a href="/">Voltar para Home</a>
 
+    <script>document.querySelector('.btn').onclick = function () {
+        document.getElementById('userModal').style.display = 'block';
+    };
+    
+    // Fechar o modal ao clicar no X
+    document.querySelector('.close').onclick = function () {
+        document.getElementById('userModal').style.display = 'none';
+    };
+    
+    // Fechar o modal se o usuário clicar fora dele
+    window.onclick = function (event) {
+        let modal = document.getElementById('userModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+    
+
+    document.getElementById('userForm').onsubmit = async function (event) {
+        event.preventDefault();  // Evita o reload da página
+        const formData = new FormData(this);
+    
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
+        });
+    
+        const result = await response.json();
+        if (result.status === 'success') {
+            alert('Usuário criado com sucesso!');
+            document.getElementById('userModal').style.display = 'none';
+            location.reload();  // Atualiza a lista de usuários
+        } else {
+            alert('Erro ao criar o usuário.');
+        }
+    };
+</script>
 </body>
 </html>

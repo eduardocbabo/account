@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_django
 from django.contrib.auth.decorators import login_required
+from access.models import Profile
 
 def cadastro(request):
     if request.method == "GET":
@@ -74,7 +75,27 @@ def base(request):
 
 def lista_usuarios(request):
     usuarios = User.objects.all()  # Consulta todos os usuários
-    return render(request, 'usuarios.html', {'usuarios': usuarios})
+    profiles = Profile.objects.all()  # Consulta todos os usuários
+    combined_data = zip(usuarios, profiles)
+    return render(request, 'usuarios.html', {'usuarios': usuarios, 'profiles': profiles, 'combined_data': combined_data})
+
+def lista_usuarios(request):
+    usuarios = User.objects.all()  # Consulta todos os usuários
+    profiles = Profile.objects.all()  # Consulta todos os usuários
+    return render(request, 'usuarios.html', {'usuarios': usuarios, 'profiles': profiles})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def criar_usuario(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = User.objects.create_user(username=username, email=email, password=password)
+        return JsonResponse({'status': 'success', 'user_id': user.id})
+    return JsonResponse({'status': 'error'}, status=400)
 
 # def send_email_view(request):
 #     if request.method == 'POST':
