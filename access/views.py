@@ -21,7 +21,7 @@ def cadastro(request):
         user = User.objects.create_user(username=username, email=email, password=senha)
         user.save()
 
-        return HttpResponse('Usuario cadastrado!')
+        return HttpResponse('Perfil cadastrado!')
 
 def login(request):
     if request.method == "GET":
@@ -87,14 +87,28 @@ def lista_usuarios(request):
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+# @csrf_exempt
+# def criar_usuario(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password')
+#         user = User.objects.create_user(username=username, email=email, password=password)
+#         return JsonResponse({'status': 'success', 'user_id': user.id})
+#     return JsonResponse({'status': 'error'}, status=400)
+
 @csrf_exempt
-def criar_usuario(request):
+def criar_profile(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get ('last_name')
         email = request.POST.get('email')
-        password = request.POST.get('password')
-        user = User.objects.create_user(username=username, email=email, password=password)
-        return JsonResponse({'status': 'success', 'user_id': user.id})
+        cpf = request.POST.get('cpf')
+        birthday = request.POST.get('birthday')
+        mobile = request.POST.get('mobile')
+        company = request.POST.get('company')
+        profile = Profile.objects.create(first_name=first_name, last_name=last_name, email=email, cpf=cpf, birthday=birthday, mobile=mobile, company=company)
+        return JsonResponse({'status': 'success', 'profile_id': profile.id})
     return JsonResponse({'status': 'error'}, status=400)
 
 # def send_email_view(request):

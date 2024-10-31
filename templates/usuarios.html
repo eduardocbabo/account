@@ -124,30 +124,53 @@
     color: black;
     text-decoration: none;
 }
+
+        /* .modal-form input,
+        .modal-form select,
+        .modal-form textarea {
+    width: 100%; /* Ou outra largura fixa, como 300px */
+    box-sizing: border-box; /* Garante que padding e bordas sejam incluídos na largura */
+} */
     </style>
 </head>
 <body>
 
-    <h1>Lista de Usuários</h1>
+    
 
     <div class="actions">
         <button class="btn">
-            <i data-lucide="plus"></i> Add User
+            <i data-lucide="plus"></i> + Novo Perfil
         </button>
         <div id="userModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2>Adicionar Usuário</h2>
-                <form id="userForm" method="POST" action="{% url 'criar_usuario' %}">
+                <h2>Adicionar Perfil</h2>
+                <form id="userForm" method="POST" action="{% url 'criar_profile' %}">
                     {% csrf_token %}
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="first_name">Primeiro nome:</label>
+                    <input type="text" id="first_name" name="first_name" required><br><br>
+
+                    <label for="last_name">Sobrenome:</label>
+                    <input type="text" id="last_name" name="last_name" required><br><br>
         
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" required><br><br>
+
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required><br><br>
+
+                    <label for="mobile">Telefone/Whatsapp:</label>
+                    <input type="text" id="mobile" name="mobile" required><br><br>
+
+                    <label for="birthday">Data de Nascimento:</label>
+                    <input type="date" id="birthday" name="birthday" required><br><br>
+
+                    <label for="company">Empresa:</label>
+                    <input type="text" id="company" name="company" required><br><br>
+
         
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required><br><br>
+                    <!-- <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br><br> -->
         
                     <button type="submit" class="btn">Salvar</button>
                 </form>
@@ -168,31 +191,8 @@
         </button>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Ativo</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
-            <tr>
-                <td>{{ usuario.id }}</td>
-                <td>{{ usuario.username }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>{{ usuario.is_active|yesno:"Sim,Não" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">Nenhum usuário encontrado.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
+    
+    <!-- <br>
     <br>
     <h1>Lista de Perfis</h1>
     <table>
@@ -224,31 +224,62 @@
 
 
 <br>
-<br>
-<h1>Lista Combinada de Usuários e Perfis</h1>
+<br> -->
+
+<!-- <h1>Lista de Usuários</h1>
 <table>
     <thead>
         <tr>
             <th>ID</th>
             <th>Username</th>
-            <th>Email do Usuário</th>
-            <th>CPF</th>
-            <th>Email do Perfil</th>
-            <th>Data de Nascimento</th>
+            <th>Email</th>
+            <th>Ativo</th>
         </tr>
     </thead>
     <tbody>
         {% for usuario in usuarios %}
-            {% with profile=usuario.profile %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.is_active|yesno:"Sim,Não" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhum usuário encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table> -->
+
+<br>
+
+<h1>Perfis e Usuarios</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email do Perfil</th>
+            <th>CPF</th>
+            <th>Data de Nascimento</th>
+            <th>Telefone</th>
+            <th>Empresa</th>
+            <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for profile in profiles %}
             <tr>
-                <td>{{ usuario.id }}</td>
-                <td>{{ usuario.username }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>{{ profile.cpf }}</td>
+                <td>{{ profile.id }}</td>
+                <td>{{ profile.first_name }} {{ profile.last_name }}</td>
                 <td>{{ profile.email }}</td>
-                <td>{{ profile.birthday }}</td>
+                <td>{{ profile.cpf }}</td>
+                <td>{{ profile.birthday|date:"d/m/Y" }}</td>
+                <td>{{ profile.mobile }}</td>
+                <td>{{ profile.company }}</td>
+                <td>{{ usuario.username }}</td>
             </tr>
-            {% endwith %}
         {% empty %}
         <tr>
             <td colspan="6">Nenhum usuário ou perfil encontrado.</td>

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import criar_usuario
+from .views import criar_profile
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -8,6 +8,6 @@ urlpatterns = [
     path('cadastro/', views.cadastro, name='cadastro'),
     path('login/', views.login, name='login'),
     path('plataforma/', views.plataforma, name='plataforma'),
-    path('criar_usuario/', criar_usuario, name='criar_usuario'),
+    path('criar_profile/', criar_profile, name='criar_profile'),
     path('admin/password_reset/', auth_views.PasswordResetView.as_view(), name='admin_password_reset'),
 ]
