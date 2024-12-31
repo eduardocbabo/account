@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -272,5 +275,74 @@ UNFOLD = {
                 ],
             },
         ],
+    },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SIMPLE_JWT = {
+    # Definição de tempo de expiração para os tokens
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Tempo de vida do token de acesso
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Tempo de vida do token de atualização
+
+    # Algoritmo e chave para assinar o token
+    # 'ALGORITHM': 'HS256',  # Algoritmo para assinar o token
+    # 'SIGNING_KEY': settings.SECRET_KEY,  # Chave secreta do Django para assinar o token
+
+    # Configurações de autenticação básica
+    'AUTH_HEADER_TYPES': ('Bearer',),  # Tipo de autenticação no cabeçalho
+    # 'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',  # Nome do cabeçalho
+
+    # Definições básicas do comportamento dos tokens
+    'ROTATE_REFRESH_TOKENS': False,  # Não rotacionar tokens de refresh automaticamente
+    'BLACKLIST_AFTER_ROTATION': False,  # Não invalidar tokens de refresh após uso
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    
+    # Configurações de serializers
+    'TOKEN_OBTAIN_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',  # Serializer para obter tokens
+    'TOKEN_REFRESH_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenRefreshSerializer',  # Serializer para renovar tokens
+    'TOKEN_VERIFY_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenVerifySerializer',  # Serializer para verificar tokens
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'mesa.tegge API',
+    'DESCRIPTION': 'Documentação para produto INSS',
+    'VERSION': 'v1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'mesa.tegge API',
+    'DESCRIPTION': 'Documentação para produto INSS BRB',
+    'VERSION': 'v1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'docExpansion': 'none',
+        'defaultModelsExpandDepth': -1,
+        'defaultModelRendering': 'model',
+        'displayOperationId': True,
+        'displayRequestDuration': True,
+        'filter': True,
+        'showRequestHeaders': True,
+        'showExtensions': True,
+        'showCommonExtensions': True,
+        'supportedSubmitMethods': ['get', 'post', 'put', 'delete', 'patch',],
+        # Custom logo
+        'customCss': '''
+            .swagger-ui .topbar { 
+                background: url('/static/images/logo-dark.png') no-repeat;
+                background-size: contain;
+                height: 50px; /* Ajuste o tamanho do cabeçalho conforme necessário */
+            }
+        ''',
     },
 }
